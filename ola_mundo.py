@@ -1,6 +1,6 @@
 import json
 
-# --- Funções de Validação Centralizadas ---
+
 
 def is_formato_nome_valido(nome):
     nome_tratado = nome.strip()
@@ -21,7 +21,7 @@ def is_formato_idade_valido(idade_str):
         return False
     return True
 
-# --- Funções Auxiliares ---
+
 
 def obter_nome_valido():
     while True:
@@ -43,8 +43,7 @@ def classificar_idade(idade):
     else:
         return "adulto"
 
-# --- Definição da Classe (O Molde) ---
-# A classe é definida aqui para que ela possa usar a função classificar_idade, que já foi definida acima.
+
 class Usuario:
     def __init__(self, nome, idade):
         self.nome = nome
@@ -55,7 +54,7 @@ class Usuario:
         if novo_nome:
             self.nome = novo_nome
         
-        if nova_idade is not None: # Usamos 'is not None' para permitir idade 0
+        if nova_idade is not None: 
             self.idade = nova_idade
             self.grupo = classificar_idade(self.idade)
 
@@ -65,11 +64,11 @@ class Usuario:
 def salvar_usuarios(lista_usuarios, nome_arquivo="usuarios.json"):
     
     try:
-        # Usando List Comprehension para converter objetos em dicionários de forma concisa.
+        
         lista_para_salvar = [{"nome": u.nome, "idade": u.idade} for u in lista_usuarios]
 
         with open(nome_arquivo, 'w', encoding='utf-8') as f:
-            # Agora salvamos a lista de dicionários, que o JSON entende
+            
             json.dump(lista_para_salvar, f, indent=4, ensure_ascii=False)
         print(f"\nDados salvos com sucesso no arquivo '{nome_arquivo}'!")
     except IOError:
@@ -80,7 +79,7 @@ def carregar_usuarios(nome_arquivo="usuarios.json"):
     try:
         with open(nome_arquivo, 'r', encoding='utf-8') as f:
             dados_em_dicionario = json.load(f)
-            # Usando List Comprehension para converter dicionários em objetos.
+            
             return [Usuario(nome=d['nome'], idade=d['idade']) for d in dados_em_dicionario]
     except FileNotFoundError:
         return [] 
@@ -101,14 +100,14 @@ def mostrar_menu():
 def adicionar_novo_usuario(usuarios_cadastrados):
     
     nome_usuario = obter_nome_valido()
-    # Agora a verificação usa a notação de objeto: u.nome
+    
     usuario_existe = any(u.nome.lower() == nome_usuario.lower() for u in usuarios_cadastrados)
     if usuario_existe:
         print(f"\nErro: O usuário '{nome_usuario}' já está cadastrado.")
         return
     
     idade_usuario = obter_idade_valida()
-    # Criamos um novo OBJETO da classe Usuario
+    
     novo_usuario = Usuario(nome=nome_usuario, idade=idade_usuario)
     usuarios_cadastrados.append(novo_usuario)
     print(f"\nUsuário {nome_usuario} cadastrado com sucesso!")
@@ -120,7 +119,7 @@ def listar_todos_usuarios(usuarios_cadastrados):
         print("Nenhum usuário cadastrado ainda.")
         return
 
-    # Agora, o próprio objeto sabe como se apresentar de forma formatada.
+    
     for usuario in usuarios_cadastrados:
          print(usuario)
 
@@ -158,37 +157,37 @@ def editar_usuario(usuarios_cadastrados):
                                                         
         print("Deixe em branco para não alterar.")
 
-        # --- Loop para obter e validar o novo nome ---
+        
         while True:
             novo_nome_str = input(f"Novo nome: ").strip()
-            if not novo_nome_str: # Usuário deixou em branco para pular
+            if not novo_nome_str: 
                 nome_para_atualizar = None
                 break
             
             if not is_formato_nome_valido(novo_nome_str):
-                continue # Formato inválido, pede o nome novamente
+                continue 
             
             if any(u.nome.lower() == novo_nome_str.lower() for u in usuarios_cadastrados if u is not usuario_encontrado):
                 print(f"Erro: O nome '{novo_nome_str}' já está em uso. Tente outro.")
-                continue # Nome já existe, pede o nome novamente
+                continue 
             
             nome_para_atualizar = novo_nome_str
-            break # Nome é válido e único, sai do loop
+            break 
 
-        # --- Loop para obter e validar a nova idade ---
+        
         while True:
             nova_idade_str = input(f"Nova idade: ").strip()
-            if not nova_idade_str: # Usuário deixou em branco para pular
+            if not nova_idade_str: 
                 idade_para_atualizar = None
                 break
             
             if is_formato_idade_valido(nova_idade_str):
                 idade_para_atualizar = int(nova_idade_str)
-                break # Idade é válida, sai do loop
+                break 
 
-        # --- Chamada do Método (o objeto se atualiza) ---
+        
         if nome_para_atualizar or idade_para_atualizar is not None:
-            # A mágica acontece aqui: o próprio objeto é quem se atualiza.
+            
             usuario_encontrado.atualizar_dados(novo_nome=nome_para_atualizar, nova_idade=idade_para_atualizar)
             print("Usuário atualizado com sucesso!")
         else:
@@ -218,7 +217,5 @@ def main():
         else:
             print("\nOpção inválida. Por favor, escolha uma das opções do menu.")
 
-# Esta construção garante que a função main() só seja executada
-# quando o script é rodado diretamente.
 if __name__ == '__main__':
     main()
